@@ -1,0 +1,14 @@
+version: "3.9"
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ".:/app"
+    ports:
+      - "8900:8900"
+    environment:
+      NODE_ENV: development
+      HOST: 0.0.0.0
+    command: sh -c "cd /app && npm run dev"
