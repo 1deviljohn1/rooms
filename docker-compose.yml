@@ -1,9 +1,11 @@
 version: "3.9"
 services:
   web:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: .
+      # context: .
+      # dockerfile: Dockerfile
+      # image: 'dude/man:v2'
+    image: 'sandbox'
     volumes:
       - ".:/app"
     ports:
@@ -11,4 +13,4 @@ services:
     environment:
       NODE_ENV: development
       HOST: 0.0.0.0
-    command: sh -c "cd /app && npm run dev"
+    command: sh -c "npm install && npm run dev"
