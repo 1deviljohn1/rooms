@@ -1,8 +1,12 @@
 import { Canvas } from './Canvas'
 
 export class Сharacter {
-    private speed: number = 1
-    private gravity: number = 2
+    private speed = { x: 20, y: 0 }
+    private gravity = 2
+    private jumpSpeed = 40
+    private movingRight = false
+    private movingLeft = false
+    private jumping = false
 
     constructor(
         private coords: {
@@ -23,15 +27,55 @@ export class Сharacter {
     }
 
     update() {
-        this.canvas.ctx.clearRect(...this.position)
+        this.clear()
 
-        if (this.canvas.el.height >= this.coords.y + this.height + this.speed) {
-            this.speed += this.gravity
-            this.coords.y += this.speed
+        // gravity & jumping
+        const canFalling = this.canvas.el.height >= this.coords.y + this.height + this.speed.y
+
+        if (canFalling && !this.jumping) {
+            this.speed.y += this.gravity
+            this.coords.y += this.speed.y
+        } else if (this.jumping) {
+            this.speed.y -= this.gravity
+            this.coords.y -= this.speed.y
         } else {
             this.coords.y = this.canvas.el.height - this.height
+            this.speed.y = this.gravity
+        }
+
+        // x-axis moving
+        if (this.movingRight) {
+            this.coords.x += this.speed.x
+        }
+
+        if (this.movingLeft) {
+            this.coords.x -= this.speed.x
         }
 
         this.draw()
+    }
+
+    clear() {
+        this.canvas.ctx.clearRect(...this.position)
+    }
+
+    moveRight() {
+        this.movingRight = true
+    }
+
+    moveLeft() {
+        this.movingLeft = true
+    }
+
+    stopMove() {
+        this.movingLeft = false
+        this.movingRight = false
+    }
+
+    jump() {
+        if (this.canvas.el.height === this.coords.y + this.height) {
+            this.speed.y = this.jumpSpeed
+            this.jumping = true
+        }
     }
 }
