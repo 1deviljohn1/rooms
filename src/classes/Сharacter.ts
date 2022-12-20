@@ -1,12 +1,12 @@
 import { Canvas } from './Canvas'
 
 export class Сharacter {
-    private speed = { x: 20, y: 0 }
-    private gravity = 2
-    private jumpSpeed = 40
+    private speed = { x: 15, y: 0 }
+    private gravity = 4
+    private jumpSpeed = 50
     private movingRight = false
     private movingLeft = false
-    private jumping = false
+    private canJumping = false
 
     constructor(
         private coords: {
@@ -29,34 +29,38 @@ export class Сharacter {
     update() {
         this.clear()
 
-        // gravity & jumping
-        const canFalling = this.canvas.el.height >= this.coords.y + this.height + this.speed.y
+        // gravity
+        const canFalling = this.coords.y + this.height + this.speed.y < this.canvas.el.height
+        this.canJumping = !canFalling
 
-        if (canFalling && !this.jumping) {
+        if (canFalling) {
             this.speed.y += this.gravity
             this.coords.y += this.speed.y
-        } else if (this.jumping) {
-            this.speed.y -= this.gravity
-            this.coords.y -= this.speed.y
         } else {
+            this.speed.y = 0
             this.coords.y = this.canvas.el.height - this.height
-            this.speed.y = this.gravity
         }
 
         // x-axis moving
-        if (this.movingRight) {
+        if (this.movingRight && this.coords.x + this.width < this.canvas.el.width) {
             this.coords.x += this.speed.x
         }
 
-        if (this.movingLeft) {
+        if (this.movingLeft && this.coords.x > 0) {
             this.coords.x -= this.speed.x
         }
+
+        // display coords
+        this.canvas.ctx.font = '18px Arial'
+        this.canvas.ctx.fillText(`x: ${this.coords.x}`, this.canvas.el.width - 100, 50)
+        this.canvas.ctx.fillText(`y: ${this.coords.y}`, this.canvas.el.width - 100, 70)
+        this.canvas.ctx.fillText(`speed: ${this.speed.y}`, this.canvas.el.width - 100, 90)
 
         this.draw()
     }
 
     clear() {
-        this.canvas.ctx.clearRect(...this.position)
+        this.canvas.ctx.clearRect(0, 0, this.canvas.el.width, this.canvas.el.height)
     }
 
     moveRight() {
@@ -73,9 +77,8 @@ export class Сharacter {
     }
 
     jump() {
-        if (this.canvas.el.height === this.coords.y + this.height) {
-            this.speed.y = this.jumpSpeed
-            this.jumping = true
+        if (this.canJumping) {
+            this.speed.y -= this.jumpSpeed
         }
     }
 }

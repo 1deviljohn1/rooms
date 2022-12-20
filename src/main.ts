@@ -4,9 +4,7 @@ import { Сharacter } from './classes/Сharacter'
 import { keys } from './types'
 
 const canvas = new Canvas('canvas')
-
 const сharacter = new Сharacter({ x: 100, y: 100 }, 50, 50, canvas)
-
 сharacter.draw()
 
 const animate = () => {
