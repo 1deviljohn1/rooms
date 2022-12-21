@@ -1,20 +1,20 @@
 import { Canvas } from './Canvas'
 
 export class Сharacter {
-    private speed = { x: 15, y: 0 }
-    private gravity = 4
+    public speed = { x: 15, y: 0 }
+    private gravity = 3
     private jumpSpeed = 50
     private movingRight = false
     private movingLeft = false
     private canJumping = false
 
     constructor(
-        private coords: {
+        public coords: {
             x: number
             y: number
         },
-        private width: number,
-        private height: number,
+        public width: number,
+        public height: number,
         private canvas: Canvas
     ) {}
 
@@ -22,11 +22,12 @@ export class Сharacter {
         return [this.coords.x, this.coords.y, this.width, this.height]
     }
 
-    draw() {
+    private draw() {
+        this.canvas.ctx.fillStyle = 'green'
         this.canvas.ctx.fillRect(...this.position)
     }
 
-    update() {
+    public update() {
         this.clear()
 
         // gravity
@@ -52,6 +53,7 @@ export class Сharacter {
 
         // display coords
         this.canvas.ctx.font = '18px Arial'
+        this.canvas.ctx.fillStyle = '#000000'
         this.canvas.ctx.fillText(`x: ${this.coords.x}`, this.canvas.el.width - 100, 50)
         this.canvas.ctx.fillText(`y: ${this.coords.y}`, this.canvas.el.width - 100, 70)
         this.canvas.ctx.fillText(`speed: ${this.speed.y}`, this.canvas.el.width - 100, 90)
@@ -59,24 +61,24 @@ export class Сharacter {
         this.draw()
     }
 
-    clear() {
+    private clear() {
         this.canvas.ctx.clearRect(0, 0, this.canvas.el.width, this.canvas.el.height)
     }
 
-    moveRight() {
+    public moveRight() {
         this.movingRight = true
     }
 
-    moveLeft() {
+    public moveLeft() {
         this.movingLeft = true
     }
 
-    stopMove() {
+    public stopMove() {
         this.movingLeft = false
         this.movingRight = false
     }
 
-    jump() {
+    public jump() {
         if (this.canJumping) {
             this.speed.y -= this.jumpSpeed
         }

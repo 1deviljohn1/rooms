@@ -1,9 +1,9 @@
 export enum keys {
-    KeyUp = 'w',
+    KeyUp = 'KeyW',
     ArrowUp = 'ArrowUp',
-    SpaceUp = ' ',
-    KeyLeft = 'a',
+    SpaceUp = 'Space',
+    KeyLeft = 'KeyA',
     ArrowLeft = 'ArrowLeft',
-    KeyRight = 'd',
+    KeyRight = 'KeyD',
     ArrowRight = 'ArrowRight',
 }
