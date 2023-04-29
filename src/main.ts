@@ -9,12 +9,9 @@ canvas.height = 64 * 9
 
 const player = new Player(canvas)
 
-c.fillStyle = 'white'
-c.fillRect(0, 0, canvas.width, canvas.height)
-
 const animate = () => {
     window.requestAnimationFrame(animate)
-    c.fillStyle = 'black'
+    c.fillStyle = 'white'
     c.fillRect(0, 0, canvas.width, canvas.height)
 
     player.draw()
