@@ -1,7 +1,7 @@
 import './assets/styles/app.scss'
 import { Keys } from './types'
 import { Player } from './classes/Player'
-import { EventsListeners } from './classes/EventsListeners'
+import { EventListeners } from './classes/EventListeners'
 import { Sprite } from './classes/Sprite'
 import { Collisions } from './classes/Collisions'
 
@@ -26,13 +26,14 @@ const keys: Keys = {
     },
 }
 
-const player = new Player()
-const eventsListeners = new EventsListeners()
 const collisions = new Collisions()
+const collisionsBlocks = collisions.collisionsBlocksArray()
+
+const player = new Player(collisionsBlocks)
+const eventsListeners = new EventListeners()
 const backgroundLevel1 = new Sprite('./img/backgroundLevel1.png')
 
-const collisionsBlocks = collisions.collisionsBlocksArray()
-eventsListeners.listenKeyDown(player, keys, canvas)
+eventsListeners.listenKeyDown(player, keys)
 eventsListeners.listenKeyUp(keys)
 
 const animate = () => {
@@ -54,7 +55,7 @@ const animate = () => {
     }
 
     player.draw(ctx)
-    player.update(canvas)
+    player.update()
 }
 
 animate()

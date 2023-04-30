@@ -1,9 +1,16 @@
 import type { Coords } from '../types'
+import type { CollisionBlock } from './CollisionBlock'
 
 export class Player {
+    constructor(collisionsBlocks: CollisionBlock[]) {
+        this.collisionsBlocks = collisionsBlocks
+    }
+
+    collisionsBlocks: CollisionBlock[]
+
     position: Coords = {
-        x: 100,
-        y: 100,
+        x: 200,
+        y: 200,
     }
 
     velocity: Coords = {
@@ -11,12 +18,64 @@ export class Player {
         y: 0,
     }
 
-    width = 100
-    height = 100
+    width = 64
+    height = 64
     gravity = 1
 
     sides = {
         bottom: this.position.y + this.height,
+    }
+
+    hasCollisionWithBlock(block: CollisionBlock) {
+        return (
+            this.position.x <= block.position.x + block.width &&
+            this.position.x + this.width >= block.position.x &&
+            this.position.y + this.height >= block.position.y &&
+            this.position.y <= block.position.y + block.height
+        )
+    }
+
+    detectHorizontalCollision() {
+        for (let index = 0; index < this.collisionsBlocks.length; index++) {
+            const block = this.collisionsBlocks[index]
+
+            if (this.hasCollisionWithBlock(block)) {
+                if (this.velocity.x > 0) {
+                    this.position.x = block.position.x - this.width - 0.01
+                    break
+                }
+
+                if (this.velocity.x < 0) {
+                    this.position.x = block.position.x + block.width + 0.01
+                    break
+                }
+            }
+        }
+    }
+
+    detectVerticalCollision() {
+        for (let index = 0; index < this.collisionsBlocks.length; index++) {
+            const block = this.collisionsBlocks[index]
+
+            if (this.hasCollisionWithBlock(block)) {
+                if (this.velocity.y > 0) {
+                    this.velocity.y = 0
+                    this.position.y = block.position.y - this.height - 0.01
+                    break
+                }
+
+                if (this.velocity.y < 0) {
+                    this.velocity.y = 0
+                    this.position.y = block.position.y + block.height + 0.01
+                    break
+                }
+            }
+        }
+    }
+
+    applyGravity() {
+        this.velocity.y += this.gravity
+        this.position.y += this.velocity.y
     }
 
     draw(ctx: CanvasRenderingContext2D) {
@@ -24,15 +83,10 @@ export class Player {
         ctx.fillRect(this.position.x, this.position.y, this.width, this.height)
     }
 
-    update(canvas: HTMLCanvasElement) {
+    update() {
         this.position.x += this.velocity.x
-        this.position.y += this.velocity.y
-        this.sides.bottom = this.position.y + this.height
-
-        if (this.sides.bottom + this.velocity.y < canvas.height) {
-            this.velocity.y += this.gravity
-        } else {
-            this.velocity.y = 0
-        }
+        this.detectHorizontalCollision()
+        this.applyGravity()
+        this.detectVerticalCollision()
     }
 }

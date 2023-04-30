@@ -1,13 +1,13 @@
 import type { Player } from './Player'
 import type { Keys } from '../types'
 
-export class EventsListeners {
-    listenKeyDown(player: Player, keys: Keys, canvas: HTMLCanvasElement) {
+export class EventListeners {
+    listenKeyDown(player: Player, keys: Keys) {
         window.addEventListener('keydown', (event) => {
             switch (event.key) {
                 case 'w':
                 case 'space':
-                    if (player.velocity.y === 0 && player.sides.bottom === canvas.height) {
+                    if (player.velocity.y === 0) {
                         player.velocity.y = -20
                     }
                     break
