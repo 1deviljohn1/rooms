@@ -1,8 +1,10 @@
 import type { Coords } from '../types'
 import type { CollisionBlock } from './CollisionBlock'
+import { Sprite } from './Sprite'
 
-export class Player {
-    constructor(collisionsBlocks: CollisionBlock[]) {
+export class Player extends Sprite {
+    constructor(collisionsBlocks: CollisionBlock[], imageScr: string, frameRate: number) {
+        super(imageScr, frameRate)
         this.collisionsBlocks = collisionsBlocks
     }
 
@@ -18,8 +20,6 @@ export class Player {
         y: 0,
     }
 
-    width = 64
-    height = 64
     gravity = 1
 
     sides = {
@@ -78,12 +78,10 @@ export class Player {
         this.position.y += this.velocity.y
     }
 
-    draw(ctx: CanvasRenderingContext2D) {
-        ctx.fillStyle = 'red'
+    update(ctx: CanvasRenderingContext2D) {
+        ctx.fillStyle = 'rgba(0, 0, 255, 0.5)'
         ctx.fillRect(this.position.x, this.position.y, this.width, this.height)
-    }
 
-    update() {
         this.position.x += this.velocity.x
         this.detectHorizontalCollision()
         this.applyGravity()

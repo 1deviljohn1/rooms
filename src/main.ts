@@ -29,7 +29,7 @@ const keys: Keys = {
 const collisions = new Collisions()
 const collisionsBlocks = collisions.collisionsBlocksArray()
 
-const player = new Player(collisionsBlocks)
+const player = new Player(collisionsBlocks, './img/king/idle.png', 11)
 const eventsListeners = new EventListeners()
 const backgroundLevel1 = new Sprite('./img/backgroundLevel1.png')
 
@@ -54,8 +54,8 @@ const animate = () => {
         player.velocity.x = 5
     }
 
-    player.draw(ctx)
-    player.update()
+    player.draw(ctx, { x: player.position.x, y: player.position.y })
+    player.update(ctx)
 }
 
 animate()
