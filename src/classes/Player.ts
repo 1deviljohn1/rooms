@@ -1,14 +1,30 @@
 import type { Coords } from '../types'
 import type { CollisionBlock } from './CollisionBlock'
-import { Sprite } from './Sprite'
 
-export class Player extends Sprite {
-    constructor(collisionsBlocks: CollisionBlock[], imageScr: string, frameRate: number) {
-        super(imageScr, frameRate)
+export class Player {
+    constructor(collisionsBlocks: CollisionBlock[]) {
         this.collisionsBlocks = collisionsBlocks
+        this.image = new Image()
+        this.image.src = './img/king/idleRight.png'
+
+        this.image.onload = () => {
+            this.imageLoaded = true
+            this.imageWidth = this.image.width / this.framesNumber
+        }
     }
 
     collisionsBlocks: CollisionBlock[]
+    image: HTMLImageElement
+
+    gravity = 1
+    framesNumber = 11
+    imageLoaded = false
+    currentFrame = 0
+    frameReducerCount = 0
+    frameReducer = 3
+    imageWidth = 0
+    width = 80
+    height = 60
 
     position: Coords = {
         x: 200,
@@ -19,8 +35,6 @@ export class Player extends Sprite {
         x: 0,
         y: 0,
     }
-
-    gravity = 1
 
     sides = {
         bottom: this.position.y + this.height,
@@ -78,13 +92,51 @@ export class Player extends Sprite {
         this.position.y += this.velocity.y
     }
 
-    update(ctx: CanvasRenderingContext2D) {
-        ctx.fillStyle = 'rgba(0, 0, 255, 0.5)'
-        ctx.fillRect(this.position.x, this.position.y, this.width, this.height)
-
+    update() {
         this.position.x += this.velocity.x
         this.detectHorizontalCollision()
         this.applyGravity()
         this.detectVerticalCollision()
+    }
+
+    draw(ctx: CanvasRenderingContext2D, position: Coords) {
+        if (!this.imageLoaded) {
+            return
+        }
+
+        const cropBox = {
+            position: {
+                x: 35 + this.imageWidth * this.currentFrame,
+                y: 30,
+            },
+            width: this.width,
+            height: this.height,
+        }
+
+        ctx.drawImage(
+            this.image,
+            cropBox.position.x,
+            cropBox.position.y,
+            cropBox.width,
+            cropBox.height,
+            position.x,
+            position.y,
+            this.width,
+            this.height
+        )
+
+        this.updateFrames()
+    }
+
+    updateFrames() {
+        this.frameReducerCount++
+
+        if (this.frameReducerCount % this.frameReducer === 0) {
+            if (this.currentFrame === this.framesNumber - 1) {
+                this.currentFrame = 0
+            } else {
+                this.currentFrame++
+            }
+        }
     }
 }

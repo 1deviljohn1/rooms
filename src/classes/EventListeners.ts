@@ -4,19 +4,19 @@ import type { Keys } from '../types'
 export class EventListeners {
     listenKeyDown(player: Player, keys: Keys) {
         window.addEventListener('keydown', (event) => {
-            switch (event.key) {
-                case 'w':
-                case 'space':
+            switch (event.code) {
+                case 'KeyW':
+                case 'Space':
                     if (player.velocity.y === 0) {
-                        player.velocity.y = -20
+                        player.velocity.y = -15
                     }
                     break
 
-                case 'a':
+                case 'KeyA':
                     keys.a.pressed = true
                     break
 
-                case 'd':
+                case 'KeyD':
                     keys.d.pressed = true
                     break
 
@@ -28,12 +28,12 @@ export class EventListeners {
 
     listenKeyUp(keys: Keys) {
         window.addEventListener('keyup', (event) => {
-            switch (event.key) {
-                case 'a':
+            switch (event.code) {
+                case 'KeyA':
                     keys.a.pressed = false
                     break
 
-                case 'd':
+                case 'KeyD':
                     keys.d.pressed = false
                     break
 
