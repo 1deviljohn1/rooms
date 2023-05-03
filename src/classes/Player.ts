@@ -1,30 +1,32 @@
 import type { Coords } from '../types'
 import type { CollisionBlock } from './CollisionBlock'
 
+type Direction = 'idleLeft' | 'idleRight' | 'runLeft' | 'runRight'
+
 export class Player {
     constructor(collisionsBlocks: CollisionBlock[]) {
         this.collisionsBlocks = collisionsBlocks
-        this.image = new Image()
-        this.image.src = './img/king/idleRight.png'
+        this.images.forEach((item) => {
+            item.entity.src = `./img/king/${item.imageSrc}.png`
+        })
 
-        this.image.onload = () => {
-            this.imageLoaded = true
-            this.imageWidth = this.image.width / this.framesNumber
-        }
+        this.image = this.images[0].entity
+        this.framesNumber = this.images[0].framesNumber
+        this.frameReducer = this.images[0].frameReducer
     }
 
     collisionsBlocks: CollisionBlock[]
     image: HTMLImageElement
+    framesNumber: number
+    frameReducer: number
 
     gravity = 1
-    framesNumber = 11
-    imageLoaded = false
     currentFrame = 0
     frameReducerCount = 0
-    frameReducer = 3
-    imageWidth = 0
+    frameWidth = 156
     width = 80
     height = 60
+    direction: Direction = 'idleRight'
 
     position: Coords = {
         x: 200,
@@ -40,7 +42,34 @@ export class Player {
         bottom: this.position.y + this.height,
     }
 
-    hasCollisionWithBlock(block: CollisionBlock) {
+    images = [
+        {
+            imageSrc: 'idleRight',
+            framesNumber: 11,
+            frameReducer: 3,
+            entity: new Image(),
+        },
+        {
+            imageSrc: 'idleLeft',
+            framesNumber: 11,
+            frameReducer: 3,
+            entity: new Image(),
+        },
+        {
+            imageSrc: 'runLeft',
+            framesNumber: 8,
+            frameReducer: 6,
+            entity: new Image(),
+        },
+        {
+            imageSrc: 'runRight',
+            framesNumber: 8,
+            frameReducer: 6,
+            entity: new Image(),
+        },
+    ]
+
+    private hasCollisionWithBlock(block: CollisionBlock) {
         return (
             this.position.x <= block.position.x + block.width &&
             this.position.x + this.width >= block.position.x &&
@@ -49,7 +78,7 @@ export class Player {
         )
     }
 
-    detectHorizontalCollision() {
+    private detectHorizontalCollision() {
         for (let index = 0; index < this.collisionsBlocks.length; index++) {
             const block = this.collisionsBlocks[index]
 
@@ -67,7 +96,7 @@ export class Player {
         }
     }
 
-    detectVerticalCollision() {
+    private detectVerticalCollision() {
         for (let index = 0; index < this.collisionsBlocks.length; index++) {
             const block = this.collisionsBlocks[index]
 
@@ -87,7 +116,7 @@ export class Player {
         }
     }
 
-    applyGravity() {
+    private applyGravity() {
         this.velocity.y += this.gravity
         this.position.y += this.velocity.y
     }
@@ -100,13 +129,9 @@ export class Player {
     }
 
     draw(ctx: CanvasRenderingContext2D, position: Coords) {
-        if (!this.imageLoaded) {
-            return
-        }
-
         const cropBox = {
             position: {
-                x: 35 + this.imageWidth * this.currentFrame,
+                x: 35 + this.frameWidth * this.currentFrame,
                 y: 30,
             },
             width: this.width,
@@ -128,7 +153,7 @@ export class Player {
         this.updateFrames()
     }
 
-    updateFrames() {
+    private updateFrames() {
         this.frameReducerCount++
 
         if (this.frameReducerCount % this.frameReducer === 0) {
@@ -137,6 +162,22 @@ export class Player {
             } else {
                 this.currentFrame++
             }
+        }
+    }
+
+    switchImage(src: Direction) {
+        if (this.direction === src) {
+            return
+        }
+
+        const image = this.images.find((item) => item.imageSrc === src)
+
+        if (image) {
+            this.image = image.entity
+            this.direction = src
+            this.currentFrame = 0
+            this.framesNumber = image.framesNumber
+            this.frameReducer = image.frameReducer
         }
     }
 }

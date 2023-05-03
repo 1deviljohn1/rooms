@@ -32,6 +32,7 @@ const collisionsBlocks = collisions.collisionsBlocksArray()
 const player = new Player(collisionsBlocks)
 const eventsListeners = new EventListeners()
 const backgroundLevel1 = new Sprite('./img/backgroundLevel1.png')
+let lastDirection: 'left' | 'right' = 'right'
 
 eventsListeners.listenKeyDown(player, keys)
 eventsListeners.listenKeyUp(keys)
@@ -48,10 +49,14 @@ const animate = () => {
 
     if (keys.a.pressed) {
         player.velocity.x = -5
-    }
-
-    if (keys.d.pressed) {
+        lastDirection = 'left'
+        player.switchImage('runLeft')
+    } else if (keys.d.pressed) {
         player.velocity.x = 5
+        lastDirection = 'right'
+        player.switchImage('runRight')
+    } else {
+        lastDirection === 'left' ? player.switchImage('idleLeft') : player.switchImage('idleRight')
     }
 
     player.draw(ctx, { x: player.position.x, y: player.position.y })
