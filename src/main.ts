@@ -1,5 +1,5 @@
 import './assets/styles/app.scss'
-import { Keys } from './types'
+import type { Keys } from './types'
 import { Player } from './classes/Player'
 import { EventListeners } from './classes/EventListeners'
 import { Sprite } from './classes/Sprite'
@@ -32,7 +32,7 @@ const collisionsBlocks = collisions.collisionsBlocksArray()
 const player = new Player(collisionsBlocks)
 const eventsListeners = new EventListeners()
 const backgroundLevel1 = new Sprite('./img/backgroundLevel1.png')
-let lastDirection: 'left' | 'right' = 'right'
+const door1 = new Sprite('./img/doorOpen.png')
 
 eventsListeners.listenKeyDown(player, keys)
 eventsListeners.listenKeyUp(keys)
@@ -41,26 +41,12 @@ const animate = () => {
     window.requestAnimationFrame(animate)
 
     backgroundLevel1.draw(ctx, { x: 0, y: 0 })
+    door1.draw(ctx, { x: 600, y: 270 })
     collisionsBlocks.forEach((block) => {
         block.draw(ctx)
     })
 
-    player.velocity.x = 0
-
-    if (keys.a.pressed) {
-        player.velocity.x = -5
-        lastDirection = 'left'
-        player.switchImage('runLeft')
-    } else if (keys.d.pressed) {
-        player.velocity.x = 5
-        lastDirection = 'right'
-        player.switchImage('runRight')
-    } else {
-        lastDirection === 'left' ? player.switchImage('idleLeft') : player.switchImage('idleRight')
-    }
-
-    player.draw(ctx, { x: player.position.x, y: player.position.y })
-    player.update()
+    player.animate(keys, ctx)
 }
 
 animate()

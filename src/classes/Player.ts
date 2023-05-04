@@ -1,5 +1,6 @@
 import type { Coords } from '../types'
 import type { CollisionBlock } from './CollisionBlock'
+import type { Keys } from '../types'
 
 type Direction = 'idleLeft' | 'idleRight' | 'runLeft' | 'runRight'
 
@@ -15,20 +16,21 @@ export class Player {
         this.frameReducer = this.images[0].frameReducer
     }
 
-    collisionsBlocks: CollisionBlock[]
-    image: HTMLImageElement
-    framesNumber: number
-    frameReducer: number
+    private collisionsBlocks: CollisionBlock[]
+    private image: HTMLImageElement
+    private framesNumber: number
+    private frameReducer: number
 
-    gravity = 1
-    currentFrame = 0
-    frameReducerCount = 0
-    frameWidth = 156
-    width = 80
-    height = 60
-    direction: Direction = 'idleRight'
+    private gravity = 1
+    private currentFrame = 0
+    private frameReducerCount = 0
+    private frameWidth = 156
+    private width = 80
+    private height = 60
+    private direction: Direction = 'idleRight'
+    private lastDirection: 'left' | 'right' = 'right'
 
-    position: Coords = {
+    private position: Coords = {
         x: 200,
         y: 200,
     }
@@ -38,11 +40,7 @@ export class Player {
         y: 0,
     }
 
-    sides = {
-        bottom: this.position.y + this.height,
-    }
-
-    images = [
+    private images = [
         {
             imageSrc: 'idleRight',
             framesNumber: 11,
@@ -121,14 +119,14 @@ export class Player {
         this.position.y += this.velocity.y
     }
 
-    update() {
+    private update() {
         this.position.x += this.velocity.x
         this.detectHorizontalCollision()
         this.applyGravity()
         this.detectVerticalCollision()
     }
 
-    draw(ctx: CanvasRenderingContext2D, position: Coords) {
+    private draw(ctx: CanvasRenderingContext2D, position: Coords) {
         const cropBox = {
             position: {
                 x: 35 + this.frameWidth * this.currentFrame,
@@ -165,7 +163,7 @@ export class Player {
         }
     }
 
-    switchImage(src: Direction) {
+    private switchImage(src: Direction) {
         if (this.direction === src) {
             return
         }
@@ -179,5 +177,24 @@ export class Player {
             this.framesNumber = image.framesNumber
             this.frameReducer = image.frameReducer
         }
+    }
+
+    animate(keys: Keys, ctx: CanvasRenderingContext2D) {
+        this.velocity.x = 0
+
+        if (keys.a.pressed) {
+            this.velocity.x = -5
+            this.lastDirection = 'left'
+            this.switchImage('runLeft')
+        } else if (keys.d.pressed) {
+            this.velocity.x = 5
+            this.lastDirection = 'right'
+            this.switchImage('runRight')
+        } else {
+            this.lastDirection === 'left' ? this.switchImage('idleLeft') : this.switchImage('idleRight')
+        }
+
+        this.draw(ctx, { x: this.position.x, y: this.position.y })
+        this.update()
     }
 }
