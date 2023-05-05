@@ -2,7 +2,7 @@ import type { Coords } from '../types'
 import type { CollisionBlock } from './CollisionBlock'
 import type { Keys } from '../types'
 
-type Direction = 'idleLeft' | 'idleRight' | 'runLeft' | 'runRight'
+type Direction = 'idleLeft' | 'idleRight' | 'runLeft' | 'runRight' | 'enterDoor'
 
 export class Player {
     constructor(collisionsBlocks: CollisionBlock[]) {
@@ -25,12 +25,13 @@ export class Player {
     private currentFrame = 0
     private frameReducerCount = 0
     private frameWidth = 156
-    private width = 80
+    width = 80
     private height = 60
     private direction: Direction = 'idleRight'
     private lastDirection: 'left' | 'right' = 'right'
+    enteringDoor = false
 
-    private position: Coords = {
+    position: Coords = {
         x: 200,
         y: 200,
     }
@@ -38,6 +39,12 @@ export class Player {
     velocity: Coords = {
         x: 0,
         y: 0,
+    }
+
+    get sides() {
+        return {
+            rigth: this.position.x + this.width,
+        }
     }
 
     private images = [
@@ -65,12 +72,18 @@ export class Player {
             frameReducer: 6,
             entity: new Image(),
         },
+        {
+            imageSrc: 'enterDoor',
+            framesNumber: 8,
+            frameReducer: 6,
+            entity: new Image(),
+        },
     ]
 
     private hasCollisionWithBlock(block: CollisionBlock) {
         return (
-            this.position.x <= block.position.x + block.width &&
-            this.position.x + this.width >= block.position.x &&
+            this.position.x <= block.sides.rigth &&
+            this.sides.rigth >= block.position.x &&
             this.position.y + this.height >= block.position.y &&
             this.position.y <= block.position.y + block.height
         )
@@ -87,7 +100,7 @@ export class Player {
                 }
 
                 if (this.velocity.x < 0) {
-                    this.position.x = block.position.x + block.width + 0.01
+                    this.position.x = block.sides.rigth + 0.01
                     break
                 }
             }
@@ -156,7 +169,9 @@ export class Player {
 
         if (this.frameReducerCount % this.frameReducer === 0) {
             if (this.currentFrame === this.framesNumber - 1) {
-                this.currentFrame = 0
+                if (!this.enteringDoor) {
+                    this.currentFrame = 0
+                }
             } else {
                 this.currentFrame++
             }
@@ -182,7 +197,9 @@ export class Player {
     animate(keys: Keys, ctx: CanvasRenderingContext2D) {
         this.velocity.x = 0
 
-        if (keys.a.pressed) {
+        if (this.enteringDoor) {
+            this.switchImage('enterDoor')
+        } else if (keys.a.pressed) {
             this.velocity.x = -5
             this.lastDirection = 'left'
             this.switchImage('runLeft')

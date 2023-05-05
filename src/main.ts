@@ -31,17 +31,26 @@ const collisionsBlocks = collisions.collisionsBlocksArray()
 
 const player = new Player(collisionsBlocks)
 const eventsListeners = new EventListeners()
-const backgroundLevel1 = new Sprite('./img/backgroundLevel1.png')
-const door1 = new Sprite('./img/doorOpen.png')
 
-eventsListeners.listenKeyDown(player, keys)
+const backgroundLevel1 = new Image()
+backgroundLevel1.src = './img/backgroundLevel1.png'
+const door1 = new Sprite({
+    src: './img/doorOpen.png',
+    position: { x: 760, y: 274 },
+    framesNumber: 5,
+    framesReducer: 10,
+    loop: false,
+    autoplay: false,
+})
+
+eventsListeners.listenKeyDown(player, door1, keys)
 eventsListeners.listenKeyUp(keys)
 
 const animate = () => {
     window.requestAnimationFrame(animate)
 
-    backgroundLevel1.draw(ctx, { x: 0, y: 0 })
-    door1.draw(ctx, { x: 600, y: 270 })
+    ctx.drawImage(backgroundLevel1, 0, 0)
+    door1.draw(ctx)
     collisionsBlocks.forEach((block) => {
         block.draw(ctx)
     })
