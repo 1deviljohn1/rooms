@@ -12,8 +12,7 @@ type Animation = {
 }
 
 export class Player {
-    constructor(collisionsBlocks: CollisionBlock[]) {
-        this.collisionsBlocks = collisionsBlocks
+    constructor() {
         this.animations.forEach((item) => {
             item.entity.src = `./img/king/${item.imageSrc}.png`
         })
@@ -61,11 +60,11 @@ export class Player {
         },
     ]
 
-    private collisionsBlocks: CollisionBlock[]
     private image: HTMLImageElement
     private framesNumber: number
     private frameReducer: number
 
+    collisionsBlocks: CollisionBlock[] | [] = []
     private gravity = 1
     private currentFrame = 0
     private frameReducerCount = 0
@@ -74,7 +73,7 @@ export class Player {
     private height = 60
     private speed = 5
     private direction: Direction = 'idleRight'
-    private lastDirection: 'left' | 'right' = 'right'
+    lastDirection: 'left' | 'right' = 'right'
     currentAnimation = this.animations[0]
     enteringDoor = false
     completeEnteringDoor = false

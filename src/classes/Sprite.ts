@@ -2,7 +2,6 @@ import type { Coords } from '../types'
 
 type Image = {
     src: string
-    position: Coords
     framesNumber?: number
     framesReducer?: number
     loop?: boolean
@@ -10,17 +9,9 @@ type Image = {
 }
 
 export class Sprite {
-    constructor({
-        src,
-        position = { x: 0, y: 0 },
-        framesNumber = 1,
-        framesReducer = 0,
-        loop = true,
-        autoplay = true,
-    }: Image) {
+    constructor({ src, framesNumber = 1, framesReducer = 0, loop = true, autoplay = true }: Image) {
         this.image = new Image()
         this.image.src = src
-        this.position = position
         this.framesNumber = framesNumber
         this.framesReducer = framesReducer
         this.loop = loop
@@ -33,12 +24,12 @@ export class Sprite {
     }
 
     private image: HTMLImageElement
-    position: Coords
     private framesNumber: number
     private framesReducer: number
     private loop: boolean
     autoplay: boolean
 
+    position: Coords = { x: 0, y: 0 }
     private loaded = false
     private frameReducerCount = 0
     private currentFrame = 0

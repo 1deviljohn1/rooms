@@ -15,9 +15,4 @@ export class CollisionBlock {
             rigth: this.position.x + this.width,
         }
     }
-
-    draw(ctx: CanvasRenderingContext2D) {
-        ctx.fillStyle = 'rgba(255, 0, 0, 0.4)'
-        ctx.fillRect(this.position.x, this.position.y, this.width, this.height)
-    }
 }
