@@ -5,6 +5,8 @@ import type { Keys } from '../types'
 export class EventListeners {
     listenKeyDown(player: Player, door: Sprite, keys: Keys) {
         window.addEventListener('keydown', (event) => {
+            const offsetX = 10
+
             switch (event.code) {
                 case 'KeyW':
                 case 'Space':
@@ -13,7 +15,10 @@ export class EventListeners {
                     }
 
                     // entering door
-                    if (player.position.x >= door.position.x && player.sides.rigth <= door.sides.rigth) {
+                    if (
+                        player.position.x + offsetX >= door.position.x &&
+                        player.sides.rigth - offsetX <= door.sides.rigth
+                    ) {
                         door.autoplay = true
                         player.enteringDoor = true
                     } else {

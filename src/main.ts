@@ -4,12 +4,14 @@ import { Player } from './classes/Player'
 import { EventListeners } from './classes/EventListeners'
 import { Sprite } from './classes/Sprite'
 import { Collisions } from './classes/Collisions'
+import { fadeOut } from './utils/fadeOut'
 
 const canvas = document.getElementById('canvas') as HTMLCanvasElement
 const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
 
 canvas.width = 64 * 16
 canvas.height = 64 * 9
+let stopFading = false
 
 const keys: Keys = {
     space: {
@@ -56,6 +58,11 @@ const animate = () => {
     })
 
     player.animate(keys, ctx)
+
+    if (player.completeEnteringDoor && !stopFading) {
+        fadeOut(canvas, 800)
+        stopFading = true
+    }
 }
 
 animate()

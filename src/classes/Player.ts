@@ -3,18 +3,63 @@ import type { CollisionBlock } from './CollisionBlock'
 import type { Keys } from '../types'
 
 type Direction = 'idleLeft' | 'idleRight' | 'runLeft' | 'runRight' | 'enterDoor'
+type Animation = {
+    imageSrc: string
+    framesNumber: number
+    frameReducer: number
+    entity: HTMLImageElement
+    isActive: boolean
+}
 
 export class Player {
     constructor(collisionsBlocks: CollisionBlock[]) {
         this.collisionsBlocks = collisionsBlocks
-        this.images.forEach((item) => {
+        this.animations.forEach((item) => {
             item.entity.src = `./img/king/${item.imageSrc}.png`
         })
 
-        this.image = this.images[0].entity
-        this.framesNumber = this.images[0].framesNumber
-        this.frameReducer = this.images[0].frameReducer
+        this.image = this.animations[0].entity
+        this.framesNumber = this.animations[0].framesNumber
+        this.frameReducer = this.animations[0].frameReducer
     }
+
+    private animations: Animation[] = [
+        {
+            imageSrc: 'idleRight',
+            framesNumber: 11,
+            frameReducer: 3,
+            entity: new Image(),
+            isActive: false,
+        },
+        {
+            imageSrc: 'idleLeft',
+            framesNumber: 11,
+            frameReducer: 3,
+            entity: new Image(),
+            isActive: false,
+        },
+        {
+            imageSrc: 'runLeft',
+            framesNumber: 8,
+            frameReducer: 6,
+            entity: new Image(),
+            isActive: false,
+        },
+        {
+            imageSrc: 'runRight',
+            framesNumber: 8,
+            frameReducer: 6,
+            entity: new Image(),
+            isActive: false,
+        },
+        {
+            imageSrc: 'enterDoor',
+            framesNumber: 8,
+            frameReducer: 6,
+            entity: new Image(),
+            isActive: false,
+        },
+    ]
 
     private collisionsBlocks: CollisionBlock[]
     private image: HTMLImageElement
@@ -27,9 +72,12 @@ export class Player {
     private frameWidth = 156
     width = 80
     private height = 60
+    private speed = 5
     private direction: Direction = 'idleRight'
     private lastDirection: 'left' | 'right' = 'right'
+    currentAnimation = this.animations[0]
     enteringDoor = false
+    completeEnteringDoor = false
 
     position: Coords = {
         x: 200,
@@ -46,39 +94,6 @@ export class Player {
             rigth: this.position.x + this.width,
         }
     }
-
-    private images = [
-        {
-            imageSrc: 'idleRight',
-            framesNumber: 11,
-            frameReducer: 3,
-            entity: new Image(),
-        },
-        {
-            imageSrc: 'idleLeft',
-            framesNumber: 11,
-            frameReducer: 3,
-            entity: new Image(),
-        },
-        {
-            imageSrc: 'runLeft',
-            framesNumber: 8,
-            frameReducer: 6,
-            entity: new Image(),
-        },
-        {
-            imageSrc: 'runRight',
-            framesNumber: 8,
-            frameReducer: 6,
-            entity: new Image(),
-        },
-        {
-            imageSrc: 'enterDoor',
-            framesNumber: 8,
-            frameReducer: 6,
-            entity: new Image(),
-        },
-    ]
 
     private hasCollisionWithBlock(block: CollisionBlock) {
         return (
@@ -140,9 +155,10 @@ export class Player {
     }
 
     private draw(ctx: CanvasRenderingContext2D, position: Coords) {
+        const offsetX = ['idleLeft', 'runLeft'].includes(this.direction) ? 40 : 35
         const cropBox = {
             position: {
-                x: 35 + this.frameWidth * this.currentFrame,
+                x: offsetX + this.frameWidth * this.currentFrame,
                 y: 30,
             },
             width: this.width,
@@ -168,9 +184,12 @@ export class Player {
         this.frameReducerCount++
 
         if (this.frameReducerCount % this.frameReducer === 0) {
-            if (this.currentFrame === this.framesNumber - 1) {
+            if (this.currentFrame === this.framesNumber - 1 && !this.currentAnimation.isActive) {
                 if (!this.enteringDoor) {
                     this.currentFrame = 0
+                } else {
+                    this.completeEnteringDoor = true
+                    this.currentAnimation.isActive = true
                 }
             } else {
                 this.currentFrame++
@@ -183,7 +202,7 @@ export class Player {
             return
         }
 
-        const image = this.images.find((item) => item.imageSrc === src)
+        const image = this.animations.find((item) => item.imageSrc === src)
 
         if (image) {
             this.image = image.entity
@@ -191,6 +210,7 @@ export class Player {
             this.currentFrame = 0
             this.framesNumber = image.framesNumber
             this.frameReducer = image.frameReducer
+            this.currentAnimation = image
         }
     }
 
@@ -200,11 +220,11 @@ export class Player {
         if (this.enteringDoor) {
             this.switchImage('enterDoor')
         } else if (keys.a.pressed) {
-            this.velocity.x = -5
+            this.velocity.x = -this.speed
             this.lastDirection = 'left'
             this.switchImage('runLeft')
         } else if (keys.d.pressed) {
-            this.velocity.x = 5
+            this.velocity.x = this.speed
             this.lastDirection = 'right'
             this.switchImage('runRight')
         } else {
