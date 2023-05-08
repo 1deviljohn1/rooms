@@ -1,14 +1,10 @@
 import type { Coords } from '../types'
 
 export class CollisionBlock {
-    constructor(position: Coords) {
-        this.position = position
-    }
-
-    position: Coords
-
-    width = 64
+    private width = 64
     height = 64
+
+    constructor(public position: Coords) {}
 
     get sides() {
         return {

@@ -9,6 +9,17 @@ type Image = {
 }
 
 export class Sprite {
+    private image: HTMLImageElement
+    private framesNumber: number
+    private framesReducer: number
+    private loop: boolean
+    private loaded = false
+    private frameReducerCount = 0
+    private currentFrame = 0
+    position: Coords = { x: 0, y: 0 }
+    autoplay: boolean
+    width = 0
+
     constructor({ src, framesNumber = 1, framesReducer = 0, loop = true, autoplay = true }: Image) {
         this.image = new Image()
         this.image.src = src
@@ -22,18 +33,6 @@ export class Sprite {
             this.width = this.image.width / this.framesNumber
         }
     }
-
-    private image: HTMLImageElement
-    private framesNumber: number
-    private framesReducer: number
-    private loop: boolean
-    autoplay: boolean
-
-    position: Coords = { x: 0, y: 0 }
-    private loaded = false
-    private frameReducerCount = 0
-    private currentFrame = 0
-    width = 0
 
     get sides() {
         return {

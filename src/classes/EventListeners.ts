@@ -14,7 +14,6 @@ export class EventListeners {
                         return
                     }
 
-                    // entering door
                     if (
                         player.position.x + offsetX >= door.position.x &&
                         player.sides.rigth - offsetX <= door.sides.rigth

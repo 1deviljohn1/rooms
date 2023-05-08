@@ -4,7 +4,7 @@ import type { Keys } from '../types'
 
 type Direction = 'idleLeft' | 'idleRight' | 'runLeft' | 'runRight' | 'enterDoor'
 type Animation = {
-    imageSrc: string
+    imageSrc: Direction
     framesNumber: number
     frameReducer: number
     entity: HTMLImageElement
@@ -12,16 +12,6 @@ type Animation = {
 }
 
 export class Player {
-    constructor() {
-        this.animations.forEach((item) => {
-            item.entity.src = `./img/king/${item.imageSrc}.png`
-        })
-
-        this.image = this.animations[0].entity
-        this.framesNumber = this.animations[0].framesNumber
-        this.frameReducer = this.animations[0].frameReducer
-    }
-
     private animations: Animation[] = [
         {
             imageSrc: 'idleRight',
@@ -59,33 +49,39 @@ export class Player {
             isActive: false,
         },
     ]
-
     private image: HTMLImageElement
     private framesNumber: number
     private frameReducer: number
-
-    collisionsBlocks: CollisionBlock[] | [] = []
     private gravity = 1
     private currentFrame = 0
     private frameReducerCount = 0
     private frameWidth = 156
-    width = 80
     private height = 60
     private speed = 5
     private direction: Direction = 'idleRight'
+    private width = 80
+    private currentAnimation = this.animations[0]
+    collisionsBlocks: CollisionBlock[] | [] = []
     lastDirection: 'left' | 'right' = 'right'
-    currentAnimation = this.animations[0]
     enteringDoor = false
     completeEnteringDoor = false
-
     position: Coords = {
         x: 200,
         y: 200,
     }
-
     velocity: Coords = {
         x: 0,
         y: 0,
+    }
+
+    constructor() {
+        this.animations.forEach((item) => {
+            item.entity.src = `./img/king/${item.imageSrc}.png`
+        })
+
+        this.image = this.animations[0].entity
+        this.framesNumber = this.animations[0].framesNumber
+        this.frameReducer = this.animations[0].frameReducer
     }
 
     get sides() {
